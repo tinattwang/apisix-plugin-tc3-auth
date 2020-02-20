@@ -28,7 +28,7 @@ curl http://127.0.0.2:9080/apisix/plugin/tc3-auth/secret?app_name=user_app
     }
 ```
 
-2. 创建一个 consumer 对象，并设置插件 tc3-auth 的值。其中`secret_id`为第一步中生成的值，`exp` 为签名过期时间，单位为`秒`。 
+3. 创建一个 consumer 对象，并设置插件 tc3-auth 的值。其中`secret_id`为第一步中生成的值，`exp` 为签名过期时间，单位为`秒`。 
 ```
 curl http://127.0.0.1:9080/apisix/admin/routes/1 -X PUT -d '
 {
@@ -48,10 +48,18 @@ curl http://127.0.0.1:9080/apisix/admin/routes/1 -X PUT -d '
     }
 }'
 ```
-3. 按规则生成签名 sign，访问接口。
+4. 按规则生成签名 sign，访问接口。
 ```
 curl http://127.0.0.1:9080/hello?foo=bar\&a=c\&q=y -H "Authorization: TC3-HMAC-SHA256 Credential=c7867d451cf1a30695a505b998711625368d6c45b44269312a85d7ce144765c6,SignedHeaders=content-type,Signature=360bedc894606fd6b610bd1d500ed8e6fe7fe91f3f43d769df259ed5d2e4c79c" -H "X-PLS-Timestamp: 1582040042" -H "X-PLS-Version: v1.0" -H "Content-Type:json" 
 ```
+
+5. 若 secret_key 遗失，可通过 `/apisix/plugin/tc3-auth/secretkey` 根据 secret_id 获取 secret_key：
+
+```
+curl http://127.0.0.2:9080/apisix/plugin/tc3-auth/secretkey?secret_id=6d1945184dc4330c6a
+```
+
+
 # 签名规则
 ## 公共参数
 参数名称 | 类型|必选|描述
